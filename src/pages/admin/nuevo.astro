@@ -1,0 +1,203 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Aura Salvaje - Nuevo Producto">
+  <div id="admin-content" class="max-w-2xl mx-auto py-12 px-6 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-amber-100/50 p-8 md:p-10">
+      <div class="text-center mb-8">
+        <h1 class="text-2xl md:text-3xl font-black text-[#6D4C41] tracking-widest flex items-center justify-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          NUEVO PRODUCTO
+        </h1>
+        <p class="text-gray-500 text-sm mt-2 font-medium tracking-wide">Agrega una nueva pieza a tu colección</p>
+      </div>
+      
+      <form id="product-form" class="space-y-6">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Nombre del Producto</label>
+          <input type="text" id="name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800" placeholder="Ej. Collar Luna Mágica">
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Precio ($)</label>
+            <input type="number" id="price" step="0.01" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800" placeholder="15.00">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Categoría</label>
+            <select id="category" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800 bg-white">
+              <option value="Aretes">Aretes</option>
+              <option value="Collares">Collares</option>
+              <option value="Pulseras">Pulseras</option>
+              <option value="Anillos">Anillos</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Descripción (Opcional)</label>
+          <textarea id="description" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800 resize-none" placeholder="Cuenta un poco sobre esta pieza..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 bg-[#FCF9F2] p-4 rounded-xl border border-amber-100">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Inventario</label>
+            <input type="number" id="stock" required value="1" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800">
+          </div>
+          <div class="flex items-center justify-center pt-5">
+            <label class="flex items-center cursor-pointer group">
+              <div class="relative">
+                <input type="checkbox" id="is_featured" class="sr-only">
+                <div class="block bg-gray-200 w-12 h-7 rounded-full group-hover:bg-gray-300 transition-colors" id="toggle-bg"></div>
+                <div class="dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform" id="toggle-dot"></div>
+              </div>
+              <div class="ml-3 text-xs font-bold text-gray-500 tracking-widest uppercase">Destacado</div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Foto Principal</label>
+          <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 hover:border-amber-400 transition-colors cursor-pointer relative">
+            <input type="file" id="image" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+            <div class="flex flex-col items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500 mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+              <span class="text-sm font-bold text-gray-700" id="file-name">Haz clic para elegir foto</span>
+              <span class="text-xs text-gray-400 mt-1">PNG, JPG hasta 5MB</span>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full bg-[#8B5E34] hover:bg-[#6D4C41] text-white font-black tracking-widest text-sm py-4 rounded-xl shadow-[0_4px_14px_0_rgba(139,94,52,0.39)] hover:shadow-[0_6px_20px_rgba(139,94,52,0.23)] hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
+          GUARDAR PRODUCTO
+        </button>
+        
+        <div id="status-message" class="hidden p-4 rounded-xl text-sm font-bold text-center mt-4"></div>
+      </form>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { supabase } from '../../lib/supabase';
+
+  // Auth Check
+  supabase.auth.getSession().then(({ data: { session }, error }) => {
+    if (!session) {
+      window.location.replace('/login');
+    } else {
+      document.getElementById('admin-content')?.classList.remove('opacity-0');
+    }
+  });
+
+  // UI Logic for toggle and file input
+  const isFeaturedInput = document.getElementById('is_featured') as HTMLInputElement;
+  const toggleBg = document.getElementById('toggle-bg');
+  const toggleDot = document.getElementById('toggle-dot');
+  
+  isFeaturedInput.addEventListener('change', (e) => {
+    if ((e.target as HTMLInputElement).checked) {
+      toggleBg?.classList.replace('bg-gray-200', 'bg-amber-500');
+      toggleBg?.classList.replace('group-hover:bg-gray-300', 'group-hover:bg-amber-600');
+      toggleDot?.classList.add('translate-x-5');
+    } else {
+      toggleBg?.classList.replace('bg-amber-500', 'bg-gray-200');
+      toggleBg?.classList.replace('group-hover:bg-amber-600', 'group-hover:bg-gray-300');
+      toggleDot?.classList.remove('translate-x-5');
+    }
+  });
+
+  const imageInput = document.getElementById('image') as HTMLInputElement;
+  const fileNameDisplay = document.getElementById('file-name') as HTMLSpanElement;
+
+  imageInput.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      fileNameDisplay.textContent = file.name;
+      fileNameDisplay.classList.add('text-amber-600');
+    } else {
+      fileNameDisplay.textContent = 'Haz clic para elegir foto';
+      fileNameDisplay.classList.remove('text-amber-600');
+    }
+  });
+
+  // Form Submission Logic
+  const form = document.getElementById('product-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const statusMsg = document.getElementById('status-message') as HTMLDivElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> SUBIENDO FOTO...';
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+    statusMsg.classList.add('hidden');
+
+    try {
+      const file = imageInput.files?.[0];
+      if (!file) throw new Error("Debes seleccionar una imagen");
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const filePath = `public/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('productos')
+        .upload(filePath, file);
+
+      if (uploadError) throw new Error(`Error al subir imagen: ${uploadError.message}`);
+
+      const { data: publicUrlData } = supabase.storage
+        .from('productos')
+        .getPublicUrl(filePath);
+      
+      const imageUrl = publicUrlData.publicUrl;
+
+      submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> GUARDANDO...';
+
+      const name = (document.getElementById('name') as HTMLInputElement).value;
+      const price = parseFloat((document.getElementById('price') as HTMLInputElement).value);
+      const category = (document.getElementById('category') as HTMLSelectElement).value;
+      const description = (document.getElementById('description') as HTMLTextAreaElement).value;
+      const stock = parseInt((document.getElementById('stock') as HTMLInputElement).value);
+      const is_featured = isFeaturedInput.checked;
+
+      const { error: insertError } = await supabase
+        .from('products')
+        .insert([
+          { 
+            name, 
+            price, 
+            category, 
+            description, 
+            stock, 
+            is_featured, 
+            image_url: imageUrl 
+          }
+        ]);
+
+      if (insertError) throw new Error(`Error guardando en BD: ${insertError.message}`);
+
+      statusMsg.textContent = '¡PRODUCTO CREADO CON ÉXITO! ✨';
+      statusMsg.className = 'p-4 rounded-xl text-sm font-black tracking-widest text-center mt-4 bg-green-100 text-green-800 block border border-green-200';
+      
+      form.reset();
+      fileNameDisplay.textContent = 'Haz clic para elegir foto';
+      fileNameDisplay.classList.remove('text-amber-600');
+      toggleBg?.classList.replace('bg-amber-500', 'bg-gray-200');
+      toggleBg?.classList.replace('group-hover:bg-amber-600', 'group-hover:bg-gray-300');
+      toggleDot?.classList.remove('translate-x-5');
+
+    } catch (err: any) {
+      statusMsg.textContent = `❌ ${err.message}`;
+      statusMsg.className = 'p-4 rounded-xl text-sm font-bold text-center mt-4 bg-red-100 text-red-800 block border border-red-200';
+    } finally {
+      submitBtn.innerHTML = originalBtnText;
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+    }
+  });
+</script>

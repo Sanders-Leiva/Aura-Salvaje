@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Aura Salvaje - Editar Producto">
+  <div id="admin-content" class="max-w-2xl mx-auto py-12 px-6 opacity-0 transition-opacity duration-300">
+    <div class="mb-4">
+      <a href="/admin" class="text-sm font-bold text-amber-600 hover:text-amber-800 flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Volver al Panel
+      </a>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-amber-100/50 p-8 md:p-10 relative">
+      <div id="page-loader" class="absolute inset-0 bg-white/90 z-20 flex flex-col items-center justify-center rounded-2xl backdrop-blur-sm">
+        <svg class="animate-spin h-10 w-10 text-amber-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <p class="text-sm font-bold tracking-widest text-gray-500 uppercase">Cargando Producto...</p>
+      </div>
+
+      <div class="text-center mb-8">
+        <h1 class="text-2xl md:text-3xl font-black text-[#6D4C41] tracking-widest flex items-center justify-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+          EDITAR PRODUCTO
+        </h1>
+      </div>
+      
+      <form id="product-form" class="space-y-6">
+        <input type="hidden" id="product_id">
+        <input type="hidden" id="existing_image_url">
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Nombre del Producto</label>
+          <input type="text" id="name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800">
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Precio ($)</label>
+            <input type="number" id="price" step="0.01" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Categoría</label>
+            <select id="category" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800 bg-white">
+              <option value="Aretes">Aretes</option>
+              <option value="Collares">Collares</option>
+              <option value="Pulseras">Pulseras</option>
+              <option value="Anillos">Anillos</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Descripción</label>
+          <textarea id="description" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800 resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 bg-[#FCF9F2] p-4 rounded-xl border border-amber-100">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Inventario</label>
+            <input type="number" id="stock" required class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800">
+          </div>
+          <div class="flex items-center justify-center pt-5">
+            <label class="flex items-center cursor-pointer group">
+              <div class="relative">
+                <input type="checkbox" id="is_featured" class="sr-only">
+                <div class="block bg-gray-200 w-12 h-7 rounded-full group-hover:bg-gray-300 transition-colors" id="toggle-bg"></div>
+                <div class="dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform" id="toggle-dot"></div>
+              </div>
+              <div class="ml-3 text-xs font-bold text-gray-500 tracking-widest uppercase">Destacado</div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Actualizar Foto (Opcional)</label>
+          
+          <div class="flex gap-4 items-center mb-3 hidden" id="current-image-container">
+            <img id="current-image" src="" alt="Actual" class="w-16 h-16 object-cover rounded-lg border border-gray-200">
+            <span class="text-xs text-gray-500">Imagen actual</span>
+          </div>
+
+          <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 hover:border-blue-400 transition-colors cursor-pointer relative">
+            <input type="file" id="image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+            <div class="flex flex-col items-center pointer-events-none">
+              <span class="text-sm font-bold text-gray-700" id="file-name">Haz clic para cambiar la foto</span>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white font-black tracking-widest text-sm py-4 rounded-xl shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.23)] hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2 mt-4">
+          ACTUALIZAR PRODUCTO
+        </button>
+        
+        <div id="status-message" class="hidden p-4 rounded-xl text-sm font-bold text-center mt-4"></div>
+      </form>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { supabase } from '../../lib/supabase';
+
+  // Auth Check
+  supabase.auth.getSession().then(({ data: { session }, error }) => {
+    if (!session) {
+      window.location.replace('/login');
+    } else {
+      document.getElementById('admin-content')?.classList.remove('opacity-0');
+    }
+  });
+
+  const isFeaturedInput = document.getElementById('is_featured') as HTMLInputElement;
+  const toggleBg = document.getElementById('toggle-bg');
+  const toggleDot = document.getElementById('toggle-dot');
+  
+  const updateToggleVisual = (checked: boolean) => {
+    if (checked) {
+      toggleBg?.classList.replace('bg-gray-200', 'bg-amber-500');
+      toggleBg?.classList.replace('group-hover:bg-gray-300', 'group-hover:bg-amber-600');
+      toggleDot?.classList.add('translate-x-5');
+    } else {
+      toggleBg?.classList.replace('bg-amber-500', 'bg-gray-200');
+      toggleBg?.classList.replace('group-hover:bg-amber-600', 'group-hover:bg-gray-300');
+      toggleDot?.classList.remove('translate-x-5');
+    }
+  };
+
+  isFeaturedInput.addEventListener('change', (e) => {
+    updateToggleVisual((e.target as HTMLInputElement).checked);
+  });
+
+  const imageInput = document.getElementById('image') as HTMLInputElement;
+  const fileNameDisplay = document.getElementById('file-name') as HTMLSpanElement;
+
+  imageInput.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      fileNameDisplay.textContent = `Seleccionada: ${file.name}`;
+      fileNameDisplay.classList.add('text-blue-600');
+    } else {
+      fileNameDisplay.textContent = 'Haz clic para cambiar la foto';
+      fileNameDisplay.classList.remove('text-blue-600');
+    }
+  });
+
+  const loadData = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    
+    if (!id) {
+      alert('No se especificó un producto.');
+      window.location.href = '/admin';
+      return;
+    }
+
+    try {
+      const { data: product, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      if (!product) throw new Error("Producto no encontrado");
+
+      (document.getElementById('product_id') as HTMLInputElement).value = product.id;
+      (document.getElementById('name') as HTMLInputElement).value = product.name;
+      (document.getElementById('price') as HTMLInputElement).value = product.price;
+      (document.getElementById('category') as HTMLSelectElement).value = product.category || 'Aretes';
+      (document.getElementById('description') as HTMLTextAreaElement).value = product.description || '';
+      (document.getElementById('stock') as HTMLInputElement).value = product.stock;
+      
+      isFeaturedInput.checked = product.is_featured;
+      updateToggleVisual(product.is_featured);
+
+      if (product.image_url) {
+        (document.getElementById('existing_image_url') as HTMLInputElement).value = product.image_url;
+        const currentImg = document.getElementById('current-image') as HTMLImageElement;
+        currentImg.src = product.image_url;
+        document.getElementById('current-image-container')?.classList.remove('hidden');
+      }
+
+      document.getElementById('page-loader')?.classList.add('hidden');
+
+    } catch (err: any) {
+      alert(`Error al cargar: ${err.message}`);
+      window.location.href = '/admin';
+    }
+  };
+
+  window.addEventListener('DOMContentLoaded', loadData);
+
+  const form = document.getElementById('product-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const statusMsg = document.getElementById('status-message') as HTMLDivElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ACTUALIZANDO...';
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+    statusMsg.classList.add('hidden');
+
+    try {
+      const id = (document.getElementById('product_id') as HTMLInputElement).value;
+      let finalImageUrl = (document.getElementById('existing_image_url') as HTMLInputElement).value;
+      
+      const file = imageInput.files?.[0];
+      
+      if (file) {
+        submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> SUBIENDO FOTO...';
+        
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+        const filePath = `public/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('productos')
+          .upload(filePath, file);
+
+        if (uploadError) throw new Error(`Error al subir nueva imagen: ${uploadError.message}`);
+
+        const { data: publicUrlData } = supabase.storage
+          .from('productos')
+          .getPublicUrl(filePath);
+        
+        finalImageUrl = publicUrlData.publicUrl;
+        submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> GUARDANDO...';
+      }
+
+      const name = (document.getElementById('name') as HTMLInputElement).value;
+      const price = parseFloat((document.getElementById('price') as HTMLInputElement).value);
+      const category = (document.getElementById('category') as HTMLSelectElement).value;
+      const description = (document.getElementById('description') as HTMLTextAreaElement).value;
+      const stock = parseInt((document.getElementById('stock') as HTMLInputElement).value);
+      const is_featured = isFeaturedInput.checked;
+
+      const { error: updateError } = await supabase
+        .from('products')
+        .update({ 
+          name, 
+          price, 
+          category, 
+          description, 
+          stock, 
+          is_featured, 
+          image_url: finalImageUrl 
+        })
+        .eq('id', id);
+
+      if (updateError) throw new Error(`Error actualizando: ${updateError.message}`);
+
+      statusMsg.textContent = '¡PRODUCTO ACTUALIZADO! ✨';
+      statusMsg.className = 'p-4 rounded-xl text-sm font-black tracking-widest text-center mt-4 bg-green-100 text-green-800 block border border-green-200';
+      
+      if (file) {
+        const currentImg = document.getElementById('current-image') as HTMLImageElement;
+        currentImg.src = finalImageUrl;
+        (document.getElementById('existing_image_url') as HTMLInputElement).value = finalImageUrl;
+        document.getElementById('current-image-container')?.classList.remove('hidden');
+        fileNameDisplay.textContent = 'Haz clic para cambiar la foto';
+        fileNameDisplay.classList.remove('text-blue-600');
+        imageInput.value = '';
+      }
+
+    } catch (err: any) {
+      statusMsg.textContent = `❌ ${err.message}`;
+      statusMsg.className = 'p-4 rounded-xl text-sm font-bold text-center mt-4 bg-red-100 text-red-800 block border border-red-200';
+    } finally {
+      submitBtn.innerHTML = originalBtnText;
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+    }
+  });
+</script>

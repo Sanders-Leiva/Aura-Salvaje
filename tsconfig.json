@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "types": [
+      "astro/env"
+    ],
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
+  }
+}

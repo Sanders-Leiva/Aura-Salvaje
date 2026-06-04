@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Aura Salvaje - Iniciar Sesión">
+  <div class="min-h-[70vh] flex items-center justify-center px-6">
+    <div class="bg-white p-8 md:p-10 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-amber-100/50 w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-50 mb-4 text-amber-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h1 class="text-2xl font-black text-[#6D4C41] tracking-widest">ACCESO PRIVADO</h1>
+        <p class="text-gray-500 text-sm mt-2 font-medium tracking-wide">Panel de Administración Aura Salvaje</p>
+      </div>
+
+      <form id="login-form" class="space-y-6">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Correo Electrónico</label>
+          <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800" placeholder="tu@correo.com">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 tracking-widest uppercase mb-2">Contraseña</label>
+          <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-medium text-gray-800" placeholder="••••••••">
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full bg-[#8B5E34] hover:bg-[#6D4C41] text-white font-black tracking-widest text-sm py-4 rounded-xl shadow-md transition-all">
+          INICIAR SESIÓN
+        </button>
+
+        <div id="error-message" class="hidden p-4 rounded-xl text-sm font-bold text-center mt-4 bg-red-100 text-red-800 border border-red-200"></div>
+      </form>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  // Si ya está logueado, redirigir al admin automáticamente
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      window.location.href = '/admin';
+    }
+  });
+
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const errorMsg = document.getElementById('error-message') as HTMLDivElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    submitBtn.innerHTML = 'VERIFICANDO... ⏳';
+    submitBtn.disabled = true;
+    errorMsg.classList.add('hidden');
+
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+    const password = (document.getElementById('password') as HTMLInputElement).value;
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      if (error) throw error;
+
+      window.location.replace('/admin');
+
+    } catch (err: any) {
+      errorMsg.textContent = '❌ Credenciales incorrectas';
+      errorMsg.classList.remove('hidden');
+      submitBtn.innerHTML = 'INICIAR SESIÓN';
+      submitBtn.disabled = false;
+    }
+  });
+</script>

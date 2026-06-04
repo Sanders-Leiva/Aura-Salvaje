@@ -1,0 +1,10 @@
+---
+const categories = ["Todos", "Anillos", "Collares", "Aretes", "Pulseras"];
+---
+<div class="flex flex-wrap justify-center gap-4 mb-12">
+  {categories.map((cat, index) => (
+    <button class={`px-6 py-2 rounded-full text-xs font-bold tracking-widest border transition-all ${index === 0 ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-gray-500 border-gray-200 hover:border-amber-400 hover:text-amber-600'}`}>
+      {cat}
+    </button>
+  ))}
+</div>
