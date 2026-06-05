@@ -1,0 +1,166 @@
+---
+// src/components/CartFlyout.astro
+---
+<div id="cart-flyout-overlay" class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+<aside id="cart-flyout" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+  <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-[#FCF9F2]">
+    <h2 class="text-xl font-bold text-[#6D4C41] tracking-widest">TU CARRITO</h2>
+    <button id="close-cart-btn" class="text-gray-500 hover:text-amber-600 transition-colors p-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+
+  <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 flex flex-col gap-4">
+    <!-- Items will be injected here via JS -->
+    <div id="empty-cart-msg" class="flex flex-col items-center justify-center h-full text-center opacity-50">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-amber-800"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      <p class="font-medium">Tu carrito está vacío</p>
+    </div>
+  </div>
+
+  <div class="p-6 border-t border-gray-100 bg-gray-50">
+    <div class="flex justify-between items-center mb-4">
+      <span class="font-medium text-gray-600">Total:</span>
+      <span id="cart-total-price" class="text-2xl font-bold text-[#6D4C41]">C$0</span>
+    </div>
+    
+    <button id="whatsapp-checkout-btn" class="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-3 px-4 rounded-full flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      COMPRAR POR WHATSAPP
+    </button>
+  </div>
+</aside>
+
+<script>
+  import { cartItems, isCartOpen, removeCartItem, updateCartItemQuantity, cartTotal } from '../store/cart';
+
+  // Configuración de WhatsApp
+  const WHATSAPP_NUMBER = "50612345678"; // <--- CAMBIA ESTO POR TU NÚMERO
+
+  // Elementos DOM
+  const overlay = document.getElementById('cart-flyout-overlay');
+  const flyout = document.getElementById('cart-flyout');
+  const closeBtn = document.getElementById('close-cart-btn');
+  const itemsContainer = document.getElementById('cart-items-container');
+  const emptyMsg = document.getElementById('empty-cart-msg');
+  const totalPriceEl = document.getElementById('cart-total-price');
+  const checkoutBtn = document.getElementById('whatsapp-checkout-btn') as HTMLButtonElement;
+
+  // Renderizar un item del carrito
+  function createCartItemHTML(item) {
+    return `
+      <div class="flex gap-4 p-3 bg-white border border-gray-100 rounded-xl shadow-sm items-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+          ${item.imageUrl 
+            ? `<img src="${item.imageUrl}" alt="${item.name}" class="w-full h-full object-cover">`
+            : `<div class="w-full h-full flex items-center justify-center text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>`
+          }
+        </div>
+        <div class="flex-grow min-w-0">
+          <h4 class="text-sm font-bold text-gray-800 truncate">${item.name}</h4>
+          <p class="text-amber-600 font-medium text-sm">C$${item.price}</p>
+          <div class="flex items-center gap-3 mt-2">
+            <button class="qty-btn text-gray-400 hover:text-amber-600 transition-colors w-6 h-6 flex items-center justify-center bg-gray-50 rounded" data-id="${item.id}" data-action="decrease">-</button>
+            <span class="text-sm font-medium w-4 text-center">${item.quantity}</span>
+            <button class="qty-btn text-gray-400 hover:text-amber-600 transition-colors w-6 h-6 flex items-center justify-center bg-gray-50 rounded" data-id="${item.id}" data-action="increase">+</button>
+          </div>
+        </div>
+        <button class="remove-btn text-red-300 hover:text-red-500 transition-colors p-2" data-id="${item.id}" title="Eliminar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  // Generar URL de WhatsApp
+  function generateWhatsAppLink(items, total) {
+    let message = "Hola Aura Salvaje, quiero realizar el siguiente pedido:\n\n";
+    items.forEach(item => {
+      message += `• ${item.quantity}x ${item.name} (C$${item.price})\n`;
+    });
+    message += `\n*Total a pagar: C$${total}*\n\n`;
+    message += "Por favor indícame los pasos para el pago y envío. ¡Gracias!";
+    
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  }
+
+  // Suscribirse a cambios en los items
+  cartItems.subscribe((items) => {
+    if (!itemsContainer || !emptyMsg || !checkoutBtn) return;
+    
+    // Limpiar items existentes pero mantener el mensaje de vacio
+    const itemsHTML = items.map(createCartItemHTML).join('');
+    
+    if (items.length === 0) {
+      emptyMsg.style.display = 'flex';
+      checkoutBtn.disabled = true;
+      // Remover todo excepto el emptyMsg
+      Array.from(itemsContainer.children).forEach(child => {
+        if (child.id !== 'empty-cart-msg') child.remove();
+      });
+    } else {
+      emptyMsg.style.display = 'none';
+      checkoutBtn.disabled = false;
+      itemsContainer.innerHTML = itemsHTML + '<div id="empty-cart-msg" class="hidden"></div>'; // re-insert hidden msg
+      
+      // Re-attachear event listeners a los nuevos botones
+      document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          const id = target.dataset.id;
+          const action = target.dataset.action;
+          const item = items.find(i => i.id === id);
+          if (item) {
+            updateCartItemQuantity(id, action === 'increase' ? item.quantity + 1 : item.quantity - 1);
+          }
+        });
+      });
+      
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          removeCartItem(target.dataset.id);
+        });
+      });
+    }
+  });
+
+  // Suscribirse a cambios en el total
+  cartTotal.subscribe((total) => {
+    if (totalPriceEl) totalPriceEl.textContent = `C$${total.toFixed(2)}`;
+  });
+
+  // Evento Checkout WhatsApp
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
+      const items = cartItems.get();
+      const total = cartTotal.get().toFixed(2);
+      if (items.length > 0) {
+        window.open(generateWhatsAppLink(items, total), '_blank');
+      }
+    });
+  }
+
+  // Suscribirse a apertura/cierre del carrito
+  isCartOpen.subscribe((open) => {
+    if (!overlay || !flyout) return;
+    
+    if (open) {
+      overlay.classList.remove('hidden');
+      // Pequeño delay para la animación de opacidad
+      setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+      flyout.classList.remove('translate-x-full');
+      document.body.style.overflow = 'hidden'; // Prevenir scroll en el fondo
+    } else {
+      overlay.classList.add('opacity-0');
+      flyout.classList.add('translate-x-full');
+      setTimeout(() => overlay.classList.add('hidden'), 300);
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Listeners para cerrar
+  if (closeBtn) closeBtn.addEventListener('click', () => isCartOpen.set(false));
+  if (overlay) overlay.addEventListener('click', () => isCartOpen.set(false));
+</script>

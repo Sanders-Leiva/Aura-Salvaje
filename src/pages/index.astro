@@ -18,17 +18,17 @@ const productosAMostrar = productos || [];
   <!-- Hero Section -->
   <section class="relative bg-amber-50 py-24 overflow-hidden">
     <div class="absolute inset-0 z-0">
-      <img src="/mainbanner.png" alt="Aura Salvaje Banner" class="w-full h-full object-cover" />
-      <div class="absolute inset-0 bg-gradient-to-r from-white/80 to-transparent"></div>
+      <img src="/mainbanner.png" alt="Aura Salvaje Banner" class="w-full h-full object-cover object-[80%_center] md:object-center" />
+      <div class="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent"></div>
     </div>
     
     <div class="max-w-6xl mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-center">
-      <div class="md:w-1/2 text-center md:text-left">
-        <h1 class="text-5xl md:text-7xl font-black text-[#6D4C41] mb-4 tracking-tighter leading-tight" style="font-family: 'Playfair Display', serif;">
-          BELLEZA QUE <br><span class="text-amber-600 italic font-medium">CONECTA</span>
+      <div class="w-full md:w-1/2 text-left flex flex-col items-start">
+        <h1 class="text-5xl md:text-6xl font-semibold text-[#6D4C41] mb-4 leading-tight uppercase" style="font-family: 'Cormorant Garamond', serif;">
+          Bienvenidxs a <br><span class="text-amber-600 italic font-bold capitalize pr-2" style="font-family: 'Great Vibes', cursive;">Aura Salvaje</span>
         </h1>
-        <p class="text-gray-800 mb-8 text-lg md:text-xl font-medium tracking-wide">
-          Bisutería artesanal con intención. Diseños únicos para resaltar tu luz interior.
+        <p class="text-gray-800 mb-8 text-lg md:text-xl font-medium tracking-wide italic" style="font-family: 'Cormorant Garamond', serif;">
+          Conecta con tu esencia, vibra bonito y lleva contigo piezas creadas con amor y pura magia.
         </p>
         <a href="/catalog" class="inline-block bg-[#8B5E34] hover:bg-[#6D4C41] text-white font-bold py-4 px-10 rounded-full tracking-widest transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
           VER COLECCIÓN
@@ -96,9 +96,11 @@ const productosAMostrar = productos || [];
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         {productosAMostrar.map((producto: any) => (
           <ProductCard 
+            id={producto.id}
             title={producto.name} 
-            price={`$${producto.price}`} 
+            price={producto.price} 
             imageUrl={producto.image_url}
+            description={producto.description}
           />
         ))}
       </div>
