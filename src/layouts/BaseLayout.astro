@@ -17,7 +17,42 @@ const { title = "Aura Salvaje" } = Astro.props;
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
   </head>
   <body class="bg-[#FCF9F2] text-gray-800 font-sans antialiased min-h-screen flex flex-col">
-    
+    <!-- Pantalla de carga -->
+    <div id="loader-wrapper" class="fixed inset-0 bg-[#FCF9F2] z-[9999] flex flex-col items-center justify-center transition-all duration-1000 ease-in-out">
+      <div class="font-serif text-amber-800 text-2xl md:text-3xl text-center px-6 italic max-w-lg leading-relaxed" style="font-family: 'Cormorant Garamond', serif;" id="loader-quote"></div>
+      <div class="mt-8 flex gap-2">
+        <div class="w-2 h-2 rounded-full bg-amber-600 animate-bounce"></div>
+        <div class="w-2 h-2 rounded-full bg-amber-600 animate-bounce" style="animation-delay: 0.2s"></div>
+        <div class="w-2 h-2 rounded-full bg-amber-600 animate-bounce" style="animation-delay: 0.4s"></div>
+      </div>
+    </div>
+
+    <script is:inline>
+      const quotes = [
+        "Despierta tu esencia más salvaje...",
+        "La belleza radica en lo auténtico...",
+        "Preparando una experiencia única para ti...",
+        "Donde la naturaleza se encuentra con la elegancia...",
+        "Cada detalle cuenta una historia..."
+      ];
+      
+      const quoteElement = document.getElementById('loader-quote');
+      if (quoteElement) {
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        quoteElement.textContent = randomQuote;
+      }
+
+      window.addEventListener('load', () => {
+        const loader = document.getElementById('loader-wrapper');
+        if (loader) {
+          setTimeout(() => {
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => loader.remove(), 1000);
+          }, 800);
+        }
+      });
+    </script>
+
     <header class="bg-[#FCF9F2] py-4 px-6 md:px-12 flex justify-between items-center relative z-10 border-b border-gray-200">
       <div class="flex items-center gap-2">
         <div class="font-bold text-3xl md:text-4xl text-amber-700 flex flex-col leading-tight" style="font-family: 'Great Vibes', cursive;">
