@@ -36,7 +36,7 @@
   import { cartItems, isCartOpen, removeCartItem, updateCartItemQuantity, cartTotal } from '../store/cart';
 
   // Configuración de WhatsApp
-  const WHATSAPP_NUMBER = "50612345678"; // <--- CAMBIA ESTO POR TU NÚMERO
+  const WHATSAPP_NUMBER = "50584682400"; // <--- CAMBIA ESTO POR TU NÚMERO
 
   // Elementos DOM
   const overlay = document.getElementById('cart-flyout-overlay');
@@ -137,7 +137,7 @@
       const items = cartItems.get();
       const total = cartTotal.get().toFixed(2);
       if (items.length > 0) {
-        window.open(generateWhatsAppLink(items, total), '_blank');
+        window.location.href = generateWhatsAppLink(items, total);
       }
     });
   }
